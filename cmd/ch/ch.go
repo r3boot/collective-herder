@@ -37,7 +37,7 @@ func main() {
 		Password:       "ch",
 		SendExchange:   "ch-send",
 		RecvExchange:   "ch-recv",
-		RequestTimeout: 1000,
+		RequestTimeout: "1s",
 	})
 
 	if Amqp, err = amqp.NewAmqpClient(); err != nil {

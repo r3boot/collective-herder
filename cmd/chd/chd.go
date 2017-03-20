@@ -32,9 +32,10 @@ func main() {
 	Log = utils.NewLogger(*debug)
 
 	f = facts.NewFacts(Log)
-	Log.Debug("Loaded " + f.NumFactsAsString() + " facts.")
+	Log.Debug("Loaded " + f.NumFactsAsString() + " facts")
 
 	p = plugins.NewServers(Log)
+	Log.Debug("Loaded " + p.NumServersAsString() + " servers")
 
 	amqp.Setup(Log, amqp.AmqpConfig{
 		Address:      "rabbitmq.service.local:5672",

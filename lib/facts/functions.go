@@ -24,17 +24,14 @@ func GetFactsInFile(fileName string) (map[string]interface{}, error) {
 	}
 
 	if newFacts, err = ParseAsJSON(data); err == nil {
-		Log.Debug("GetFactsInFile: parsed " + fileName + " as JSON")
 		return newFacts, nil
 	}
 
 	if newFacts, err = ParseAsYaml(data); err == nil {
-		Log.Debug("GetFactsInFile: parsed " + fileName + " as YAML")
 		return newFacts, nil
 	}
 
 	if newFacts, err = ParseAsKV(data); err == nil {
-		Log.Debug("GetFactsInFile: parsed " + fileName + " as KV")
 		return newFacts, nil
 	}
 

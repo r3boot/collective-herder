@@ -24,5 +24,5 @@ type AmqpConfig struct {
 	Password       string `yaml:"password"`
 	SendExchange   string `yaml:"send_exchange"`
 	RecvExchange   string `yaml:"recv_exchange"`
-	RequestTimeout int    `yaml:"request_timeout"`
+	RequestTimeout string `yaml:"request_timeout"`
 }

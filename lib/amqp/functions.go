@@ -19,8 +19,6 @@ func (a *AmqpClient) Connect() error {
 	url = "amqp://" + Config.Username + ":" + Config.Password + "@" + Config.Address
 	url_d = "amqp://" + Config.Username + ":***@" + Config.Address
 
-	Log.Debug("AmqpClient.Connect: Connecting to " + url_d)
-
 	// Try to connect to AMQP
 	if a.connection, err = amqp.Dial(url); err != nil {
 		err = errors.New("AmqpClient.Connect: amqp.Dial failed: " + err.Error())
@@ -292,8 +290,7 @@ func (a *AmqpClient) SendToCollective(plugin string, facts map[string]interface{
 
 	t_start = time.Now()
 	msg = plugins.NewRequest(plugin, facts, opts)
-	Agents.StartResults(plugin, msg.Uuid, t_start)
+	Log.Debug("SendToCollective: Sending " + plugin + " message to collective")
 	a.Send(msg)
-	a.ResponseHandler(msg.Uuid, t_start)
-	Agents.CleanResults(msg.Uuid)
+	a.ResponseHandler(plugin, msg.Uuid, t_start)
 }

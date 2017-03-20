@@ -5,7 +5,7 @@ import (
 )
 
 type Agents struct {
-	printFunc   map[string]func(string, time.Duration, interface{})
+	printFunc   map[string]func(time.Time, interface{})
 	summaryFunc map[string]func()
 }
 

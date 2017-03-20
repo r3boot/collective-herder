@@ -59,11 +59,12 @@ func (a *AmqpClient) RequestHandler() error {
 	return nil
 }
 
-func (a *AmqpClient) ResponseHandler(uuid string, t_start time.Time) {
+func (a *AmqpClient) ResponseHandler(plugin string, uuid string, startTime time.Time) {
 	var (
 		data       []byte
 		response   plugins.Response
 		msgChannel <-chan amqp.Delivery
+		timeout    time.Duration
 		err        error
 	)
 
@@ -82,7 +83,24 @@ func (a *AmqpClient) ResponseHandler(uuid string, t_start time.Time) {
 		os.Exit(1)
 	}
 
+	if timeout, err = time.ParseDuration(Config.RequestTimeout); err != nil {
+		Log.Error(err)
+		os.Exit(1)
+	}
+
+	timeoutTimer := make(chan bool, 1)
+	go func() {
+		time.Sleep(timeout)
+		timeoutTimer <- true
+	}()
+
+	stop_loop := false
+
 	for {
+		if stop_loop {
+			break
+		}
+
 		select {
 		case msgReceived := <-msgChannel:
 			{
@@ -92,8 +110,15 @@ func (a *AmqpClient) ResponseHandler(uuid string, t_start time.Time) {
 					Log.Warn(err)
 					continue
 				}
-				Agents.Print(uuid, response)
+				Agents.Print(plugin, uuid, startTime, response)
+			}
+		case <-timeoutTimer:
+			{
+				stop_loop = true
+				break
 			}
 		}
 	}
+
+	Agents.Summary(plugin)
 }

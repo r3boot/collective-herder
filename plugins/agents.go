@@ -39,7 +39,7 @@ func NewAgents(l utils.Logger) *Agents {
 }
 
 func (p *Agents) LoadAllAgents() {
-	p.printFunc = make(map[string]func(string, time.Duration, interface{}))
+	p.printFunc = make(map[string]func(time.Time, interface{}))
 	p.summaryFunc = make(map[string]func())
 
 	p.printFunc[ping.NAME] = ping.Print
@@ -64,62 +64,44 @@ func (p *Agents) HasAgent(name string) bool {
 	return false
 }
 
-func (p *Agents) HasResultSet(uuid string) bool {
-	var (
-		key string
-	)
-
-	for key, _ = range Results {
-		if key == uuid {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (p *Agents) StartResults(plugin, uuid string, t_start time.Time) {
-	Results[uuid] = ResultSet{
-		StartTime: t_start,
-		Plugin:    plugin,
-		Data:      make(map[string]Result),
-	}
-}
-
-func (p *Agents) CleanResults(uuid string) {
-	delete(Results, uuid)
-}
-
-func (p *Agents) Print(uuid string, response interface{}) {
+func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interface{}) {
 	var (
 		node           string
 		hostUuid       string
 		responseResult interface{}
-		r              Result
 	)
-
-	if !p.HasResultSet(uuid) {
-		Log.Warn("Agents.Print: No result set for " + uuid)
-		return
-	}
 
 	node = response.(Response).Node
 	hostUuid = response.(Response).HostUuid
 	responseResult = response.(Response).Result
 
-	r = Result{
-		Node:     node,
-		Duration: time.Since(Results[uuid].StartTime),
-		Response: response,
+	switch plugin {
+	case ping.NAME:
+		{
+			result := ping.Result{
+				Node:     node,
+				Uuid:     hostUuid,
+				Duration: time.Since(startTime),
+				Response: responseResult.(map[string]interface{})["value"].(string),
+			}
+			p.printFunc[plugin](startTime, result)
+		}
+	default:
+		{
+			Log.Warn("Print: Unknown plugin: " + plugin)
+		}
 	}
-
-	Results[uuid].Data[hostUuid] = r
-	p.printFunc[Results[uuid].Plugin](node, r.Duration, responseResult)
 }
 
-func (p *Agents) Summary(plugin string, uuid string) {
-	if !p.HasAgent(plugin) {
-		Log.Warn("Agents.Summary: No such plugin: " + plugin)
-		return
+func (p *Agents) Summary(plugin string) {
+	switch plugin {
+	case ping.NAME:
+		{
+			p.summaryFunc[plugin]()
+		}
+	default:
+		{
+			Log.Warn("Summary: Unknown plugin: " + plugin)
+		}
 	}
 }
