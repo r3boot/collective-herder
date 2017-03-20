@@ -1,0 +1,7 @@
+---
+amqp:
+  address: "rabbitmq.service.local:5672"
+  username: "ch"
+  password: "ch"
+  send_exchange: "ch-send"
+  recv_exchange: "ch-recv"

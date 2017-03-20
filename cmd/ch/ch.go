@@ -9,12 +9,14 @@ import (
 	"strings"
 
 	"github.com/r3boot/collective-herder/lib/amqp"
+	"github.com/r3boot/collective-herder/lib/config"
 	"github.com/r3boot/collective-herder/lib/utils"
 	"github.com/r3boot/collective-herder/plugins"
 )
 
 const (
-	D_DEBUG bool = false
+	D_DEBUG   bool   = false
+	D_CFGFILE string = "/etc/ch.yml"
 )
 
 type FactFlags map[string]interface{}
@@ -22,9 +24,11 @@ type FactFlags map[string]interface{}
 var (
 	Amqp      *amqp.AmqpClient
 	Agents    *plugins.Agents
+	Config    config.Config
 	Log       utils.Log
 	factFlags FactFlags
 	debug     = flag.Bool("d", D_DEBUG, "Enable debug output")
+	cfgFile   = flag.String("f", D_CFGFILE, "Path to configuration file")
 )
 
 func (f FactFlags) String() string {
@@ -124,16 +128,12 @@ func main() {
 		UseTimestamp: true,
 	}
 
-	Log.Debug(factFlags)
+	if Config, err = config.ReadFile(*cfgFile); err != nil {
+		Log.Error(err)
+		os.Exit(1)
+	}
 
-	amqp.Setup(Log, amqp.AmqpConfig{
-		Address:        "rabbitmq.service.local:5672",
-		Username:       "ch",
-		Password:       "ch",
-		SendExchange:   "ch-send",
-		RecvExchange:   "ch-recv",
-		RequestTimeout: "1s",
-	})
+	amqp.Setup(Log, Config.Amqp)
 
 	if Amqp, err = amqp.NewAmqpClient(); err != nil {
 		Log.Error(err)
