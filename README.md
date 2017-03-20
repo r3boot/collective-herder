@@ -3,18 +3,26 @@ Collective-herder is a framework for building server orchestration or parallel j
 
 ## Building
 First, download the code
-  go get -v github.com/r3boot/collective-herder
+```bash
+go get -v github.com/r3boot/collective-herder
+```
 
 Then, proceed into the build directory and build the various commands
-  cd $GOPATH/src/github.com/r3boot/collective-herder
-  make
+```bash
+cd $GOPATH/src/github.com/r3boot/collective-herder
+make
+```
 
 ## Usage
 To start a server, run the following command:
-  ./build/chd -d
+```bash
+./build/chd -d
+```
 
 To start the client, run the following command:
-  ./build/ch -d
+```bash
+./build/ch -d
+```
 
 ## Writing custom plugins
 TODO
