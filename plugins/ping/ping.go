@@ -3,8 +3,6 @@ package ping
 import (
 	"fmt"
 	"time"
-
-	"github.com/r3boot/collective-herder/lib/utils"
 )
 
 const (
@@ -12,24 +10,6 @@ const (
 )
 
 type Response map[string]string
-
-var (
-	Log utils.Logger
-)
-
-func RegisterPrint(l utils.Logger) interface{} {
-	Log = l
-	return Print
-}
-
-func RegisterSummary() interface{} {
-	return Summary
-}
-
-func RegisterServer(l utils.Logger) interface{} {
-	Log = l
-	return Run
-}
 
 func Run(opts map[string]interface{}) interface{} {
 	var (

@@ -42,8 +42,8 @@ func (p *Agents) LoadAllAgents() {
 	p.printFunc = make(map[string]func(string, time.Duration, interface{}))
 	p.summaryFunc = make(map[string]func())
 
-	p.printFunc[ping.NAME] = ping.RegisterPrint(Log).(func(string, time.Duration, interface{}))
-	p.summaryFunc[ping.NAME] = ping.RegisterSummary().(func())
+	p.printFunc[ping.NAME] = ping.Print
+	p.summaryFunc[ping.NAME] = ping.Summary
 }
 
 func (p *Agents) NumAgentsAsString() string {

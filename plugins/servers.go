@@ -30,7 +30,7 @@ func NewServers(l utils.Logger) *Servers {
 
 func (p *Servers) LoadAllServers() {
 	p.runFunc = make(map[string]func(map[string]interface{}) interface{})
-	p.runFunc[ping.NAME] = ping.RegisterServer(Log).(func(map[string]interface{}) interface{})
+	p.runFunc[ping.NAME] = ping.Run
 }
 
 func (p *Servers) NumServersAsString() string {
