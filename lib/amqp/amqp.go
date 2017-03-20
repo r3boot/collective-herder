@@ -10,14 +10,14 @@ import (
 
 var (
 	Config   AmqpConfig
-	Log      utils.Logger
+	Log      utils.Log
 	Agents   *plugins.Agents
 	Servers  *plugins.Servers
 	Hostname string
 	HostUuid string
 )
 
-func Setup(l utils.Logger, c AmqpConfig) error {
+func Setup(l utils.Log, c AmqpConfig) error {
 	var (
 		err error
 	)

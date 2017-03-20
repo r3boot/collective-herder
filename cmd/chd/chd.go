@@ -16,7 +16,7 @@ const (
 
 var (
 	Amqp  *amqp.AmqpClient
-	Log   utils.Logger
+	Log   utils.Log
 	f     *facts.Facts
 	p     *plugins.Servers
 	debug = flag.Bool("d", D_DEBUG, "Enable debug output")
@@ -29,7 +29,11 @@ func main() {
 
 	flag.Parse()
 
-	Log = utils.NewLogger(*debug)
+	Log = utils.Log{
+		UseDebug:     *debug,
+		UseVerbose:   *debug,
+		UseTimestamp: true,
+	}
 
 	f = facts.NewFacts(Log)
 	Log.Debug("Loaded " + f.NumFactsAsString() + " facts")

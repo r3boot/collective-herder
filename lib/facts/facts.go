@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	Log utils.Logger
+	Log utils.Log
 )
 
-func NewFacts(l utils.Logger) *Facts {
+func NewFacts(l utils.Log) *Facts {
 	var (
 		f *Facts
 	)

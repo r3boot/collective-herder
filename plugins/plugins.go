@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	Log      utils.Logger
+	Log      utils.Log
 	Hostname string
 	HostUuid string
 )

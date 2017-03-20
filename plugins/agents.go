@@ -1,39 +1,27 @@
 package plugins
 
 import (
+	"fmt"
+	"os"
 	"strconv"
 	"time"
 
-	"github.com/r3boot/collective-herder/lib/utils"
 	"github.com/r3boot/collective-herder/plugins/ping"
 )
 
-type Result struct {
-	Node     string
-	Response interface{}
-	Duration time.Duration
-}
-
-type ResultSet struct {
-	StartTime time.Time
-	Plugin    string
-	Data      map[string]Result
-}
-
 var (
-	Results map[string]ResultSet
+	AgentMeta map[string]string
 )
 
-func NewAgents(l utils.Logger) *Agents {
+func NewAgents() *Agents {
 	var (
 		p *Agents
 	)
-	Log = l
 
-	p = &Agents{}
+	p = &Agents{
+		Meta: make(map[string]string),
+	}
 	p.LoadAllAgents()
-
-	Results = make(map[string]ResultSet)
 
 	return p
 }
@@ -44,6 +32,7 @@ func (p *Agents) LoadAllAgents() {
 
 	p.printFunc[ping.NAME] = ping.Print
 	p.summaryFunc[ping.NAME] = ping.Summary
+	p.Meta[ping.NAME] = ping.DESCRIPTION
 }
 
 func (p *Agents) NumAgentsAsString() string {
@@ -88,7 +77,7 @@ func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interf
 		}
 	default:
 		{
-			Log.Warn("Print: Unknown plugin: " + plugin)
+			fmt.Fprintf(os.Stderr, "Print: Unknown plugin: "+plugin)
 		}
 	}
 }
@@ -101,7 +90,7 @@ func (p *Agents) Summary(plugin string) {
 		}
 	default:
 		{
-			Log.Warn("Summary: Unknown plugin: " + plugin)
+			fmt.Fprintf(os.Stderr, "Summary: Unknown plugin: "+plugin)
 		}
 	}
 }

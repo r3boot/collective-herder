@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	NAME string = "ping"
+	NAME        string = "ping"
+	DESCRIPTION string = "Send a ping to the collective"
 )
 
 type Result struct {
@@ -22,15 +23,13 @@ type ResultSet struct {
 	Data      map[string]Result
 }
 
-type Response map[string]string
-
 var (
 	resultSet ResultSet
 )
 
 func Run(opts map[string]interface{}) interface{} {
 	var (
-		response Response
+		response map[string]string
 	)
 
 	response = make(map[string]string)

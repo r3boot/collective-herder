@@ -7,6 +7,7 @@ import (
 type Agents struct {
 	printFunc   map[string]func(time.Time, interface{})
 	summaryFunc map[string]func()
+	Meta        map[string]string
 }
 
 type Servers struct {

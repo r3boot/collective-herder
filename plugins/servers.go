@@ -8,7 +8,7 @@ import (
 	"github.com/r3boot/collective-herder/plugins/ping"
 )
 
-func NewServers(l utils.Logger) *Servers {
+func NewServers(l utils.Log) *Servers {
 	var (
 		p   *Servers
 		err error
