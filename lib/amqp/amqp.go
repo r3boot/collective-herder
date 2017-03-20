@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/r3boot/collective-herder/lib/facts"
 	"github.com/r3boot/collective-herder/lib/utils"
 	"github.com/r3boot/collective-herder/plugins"
 )
@@ -12,6 +13,7 @@ var (
 	Config   AmqpConfig
 	Log      utils.Log
 	Agents   *plugins.Agents
+	Facts    *facts.Facts
 	Servers  *plugins.Servers
 	Hostname string
 	HostUuid string

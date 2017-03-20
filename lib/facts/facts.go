@@ -58,3 +58,29 @@ func (f *Facts) LoadAllFacts() {
 func (f *Facts) NumFactsAsString() string {
 	return strconv.Itoa(len(f.facts))
 }
+
+func (f *Facts) HasFact(reqFacts map[string]interface{}) bool {
+	var (
+		reqKey    string
+		factKey   string
+		reqValue  interface{}
+		factValue interface{}
+		hasFacts  bool
+	)
+
+	if len(reqFacts) == 0 {
+		return true
+	}
+
+	for reqKey, reqValue = range reqFacts {
+		hasFacts = false
+		for factKey, factValue = range f.facts {
+			if reqKey == factKey && reqValue == factValue {
+				hasFacts = true
+				break
+			}
+		}
+	}
+
+	return hasFacts
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/streadway/amqp"
 	"time"
 
+	"github.com/r3boot/collective-herder/lib/facts"
 	"github.com/r3boot/collective-herder/lib/utils"
 	"github.com/r3boot/collective-herder/plugins"
 )
@@ -132,12 +133,13 @@ func (a *AmqpClient) ConfigureAsAgent(agents *plugins.Agents) error {
 /*
  * Server configuration
  */
-func (a *AmqpClient) ConfigureAsServer(p *plugins.Servers) error {
+func (a *AmqpClient) ConfigureAsServer(p *plugins.Servers, f *facts.Facts) error {
 	var (
 		err error
 	)
 
 	Servers = p
+	Facts = f
 
 	if a.sendChannel, err = a.connection.Channel(); err != nil {
 		err = errors.New("AmqpClient.Connect: Failed to setup a.sendChannel: " + err.Error())
@@ -290,6 +292,7 @@ func (a *AmqpClient) SendToCollective(plugin string, facts map[string]interface{
 
 	t_start = time.Now()
 	msg = plugins.NewRequest(plugin, facts, opts)
+	Log.Debug(msg)
 	Log.Debug("SendToCollective: Sending " + plugin + " message to collective")
 	a.Send(msg)
 	a.ResponseHandler(plugin, msg.Uuid, t_start)

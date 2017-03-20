@@ -2,7 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
+	"path"
 
 	"github.com/r3boot/collective-herder/lib/amqp"
 	"github.com/r3boot/collective-herder/lib/facts"
@@ -22,11 +24,24 @@ var (
 	debug = flag.Bool("d", D_DEBUG, "Enable debug output")
 )
 
+func Usage() {
+	var (
+		myName string
+	)
+
+	myName = path.Base(os.Args[0])
+	fmt.Fprintf(os.Stderr, "Usage: %s [flags] [plugin] [opts]\n", myName)
+	fmt.Fprintf(os.Stderr, "\nAvailable flags:\n")
+	flag.PrintDefaults()
+	os.Exit(2)
+}
+
 func main() {
 	var (
 		err error
 	)
 
+	flag.Usage = Usage
 	flag.Parse()
 
 	Log = utils.Log{
@@ -54,7 +69,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = Amqp.ConfigureAsServer(p); err != nil {
+	if err = Amqp.ConfigureAsServer(p, f); err != nil {
 		Log.Error(err)
 		os.Exit(1)
 	}

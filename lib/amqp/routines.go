@@ -49,6 +49,13 @@ func (a *AmqpClient) RequestHandler() error {
 					Log.Warn(err)
 					continue
 				}
+
+				if !Facts.HasFact(msg.Facts) {
+					err = errors.New("AmqpClient.RequestHandler: No fact matches a locally available fact")
+					Log.Warn(err)
+					continue
+				}
+
 				result = Servers.RunServer(msg.MsgType, msg.Opts)
 				response = plugins.NewResponse(msg.Uuid, result)
 				a.Response(response)

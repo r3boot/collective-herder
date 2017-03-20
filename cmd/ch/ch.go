@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/r3boot/collective-herder/lib/amqp"
 	"github.com/r3boot/collective-herder/lib/utils"
@@ -15,12 +17,50 @@ const (
 	D_DEBUG bool = false
 )
 
+type FactFlags map[string]interface{}
+
 var (
-	Amqp   *amqp.AmqpClient
-	Agents *plugins.Agents
-	Log    utils.Log
-	debug  = flag.Bool("d", D_DEBUG, "Enable debug output")
+	Amqp      *amqp.AmqpClient
+	Agents    *plugins.Agents
+	Log       utils.Log
+	factFlags FactFlags
+	debug     = flag.Bool("d", D_DEBUG, "Enable debug output")
 )
+
+func (f FactFlags) String() string {
+	var (
+		key      string
+		value    interface{}
+		response string
+	)
+
+	for key, value = range f {
+		if response == "" {
+			response = key + "=" + value.(string)
+		} else {
+			response += "," + key + "=" + value.(string)
+		}
+	}
+
+	return response
+}
+
+func (f FactFlags) Set(flag_s string) error {
+	var (
+		tokens []string
+		err    error
+	)
+
+	tokens = strings.Split(flag_s, "=")
+	if len(tokens) < 2 {
+		err = errors.New("Facts needs to be key=value")
+		return err
+	}
+
+	f[tokens[0]] = strings.Join(tokens[1:], "=")
+
+	return nil
+}
 
 func Usage() {
 	var (
@@ -47,7 +87,7 @@ func AgentSelector() {
 		plugin         string
 	)
 
-	if len(flag.Args()) == 0 {
+	if flag.NArg() == 0 {
 		Usage()
 	}
 	wantedPlugin = flag.Args()[0]
@@ -62,7 +102,7 @@ func AgentSelector() {
 		Usage()
 	}
 
-	Amqp.SendToCollective(selectedPlugin, nil, nil)
+	Amqp.SendToCollective(selectedPlugin, factFlags, nil)
 
 }
 
@@ -74,6 +114,8 @@ func main() {
 	Agents = plugins.NewAgents()
 
 	flag.Usage = Usage
+	factFlags = make(map[string]interface{})
+	flag.Var(factFlags, "wf", "Fact to use in key=value form")
 	flag.Parse()
 
 	Log = utils.Log{
@@ -81,6 +123,8 @@ func main() {
 		UseVerbose:   *debug,
 		UseTimestamp: true,
 	}
+
+	Log.Debug(factFlags)
 
 	amqp.Setup(Log, amqp.AmqpConfig{
 		Address:        "rabbitmq.service.local:5672",
@@ -104,6 +148,4 @@ func main() {
 	Log.Debug("Amqp client initialized")
 
 	AgentSelector()
-	// Amqp.SendToCollective("ping", nil, nil)
-
 }
