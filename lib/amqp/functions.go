@@ -3,7 +3,6 @@ package amqp
 import (
 	"errors"
 	"github.com/streadway/amqp"
-	"time"
 
 	"github.com/r3boot/collective-herder/lib/facts"
 	"github.com/r3boot/collective-herder/lib/utils"
@@ -275,25 +274,4 @@ func (a *AmqpClient) Response(msg *plugins.Response) error {
 	)
 
 	return nil
-}
-
-func (a *AmqpClient) SendToCollective(plugin string, facts map[string]interface{}, opts map[string]interface{}) {
-	var (
-		msg     *plugins.Request
-		err     error
-		t_start time.Time
-	)
-
-	if !Agents.HasAgent(plugin) {
-		err = errors.New("AmqpClient.SendToCollective: No such plugin: " + plugin)
-		Log.Warn(err)
-		return
-	}
-
-	t_start = time.Now()
-	msg = plugins.NewRequest(plugin, facts, opts)
-	Log.Debug(msg)
-	Log.Debug("SendToCollective: Sending " + plugin + " message to collective")
-	a.Send(msg)
-	a.ResponseHandler(plugin, msg.Uuid, t_start)
 }
