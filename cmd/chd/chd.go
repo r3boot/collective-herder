@@ -53,7 +53,8 @@ func main() {
 	f = facts.NewFacts(Log)
 	Log.Debug("Loaded " + f.NumFactsAsString() + " facts")
 
-	p = plugins.NewServers(Log)
+	p = plugins.NewServers(Log, f)
+
 	Log.Debug("Loaded " + p.NumServersAsString() + " servers")
 
 	amqp.Setup(Log, amqp.AmqpConfig{

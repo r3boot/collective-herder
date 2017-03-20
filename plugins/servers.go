@@ -4,16 +4,23 @@ import (
 	"os"
 	"strconv"
 
+	sysFacts "github.com/r3boot/collective-herder/lib/facts"
 	"github.com/r3boot/collective-herder/lib/utils"
+	"github.com/r3boot/collective-herder/plugins/facts"
 	"github.com/r3boot/collective-herder/plugins/ping"
 )
 
-func NewServers(l utils.Log) *Servers {
+var (
+	Facts *sysFacts.Facts
+)
+
+func NewServers(l utils.Log, f *sysFacts.Facts) *Servers {
 	var (
 		p   *Servers
 		err error
 	)
 	Log = l
+	Facts = f
 
 	p = &Servers{}
 	p.LoadAllServers()
@@ -30,7 +37,13 @@ func NewServers(l utils.Log) *Servers {
 
 func (p *Servers) LoadAllServers() {
 	p.runFunc = make(map[string]func(map[string]interface{}) interface{})
+
+	// Ping server
 	p.runFunc[ping.NAME] = ping.Run
+
+	// Facts server
+	facts.LoadFacts(Facts)
+	p.runFunc[facts.NAME] = facts.Run
 }
 
 func (p *Servers) NumServersAsString() string {

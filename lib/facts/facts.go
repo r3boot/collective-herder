@@ -59,6 +59,10 @@ func (f *Facts) NumFactsAsString() string {
 	return strconv.Itoa(len(f.facts))
 }
 
+func (f *Facts) GetAll() map[string]interface{} {
+	return f.facts
+}
+
 func (f *Facts) HasFact(reqFacts map[string]interface{}) bool {
 	var (
 		reqKey    string

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/r3boot/collective-herder/plugins/facts"
 	"github.com/r3boot/collective-herder/plugins/ping"
 )
 
@@ -30,9 +31,15 @@ func (p *Agents) LoadAllAgents() {
 	p.printFunc = make(map[string]func(time.Time, interface{}))
 	p.summaryFunc = make(map[string]func())
 
+	// Ping agent
 	p.printFunc[ping.NAME] = ping.Print
 	p.summaryFunc[ping.NAME] = ping.Summary
 	p.Meta[ping.NAME] = ping.DESCRIPTION
+
+	// Facts agent
+	p.printFunc[facts.NAME] = facts.Print
+	p.summaryFunc[facts.NAME] = facts.Summary
+	p.Meta[facts.NAME] = facts.DESCRIPTION
 }
 
 func (p *Agents) NumAgentsAsString() string {
@@ -75,6 +82,16 @@ func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interf
 			}
 			p.printFunc[plugin](startTime, result)
 		}
+	case facts.NAME:
+		{
+			result := facts.Result{
+				Node:     node,
+				Uuid:     hostUuid,
+				Duration: time.Since(startTime),
+				Response: responseResult.(map[string]interface{}),
+			}
+			p.printFunc[plugin](startTime, result)
+		}
 	default:
 		{
 			fmt.Fprintf(os.Stderr, "Print: Unknown plugin: "+plugin)
@@ -85,6 +102,10 @@ func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interf
 func (p *Agents) Summary(plugin string) {
 	switch plugin {
 	case ping.NAME:
+		{
+			p.summaryFunc[plugin]()
+		}
+	case facts.NAME:
 		{
 			p.summaryFunc[plugin]()
 		}
