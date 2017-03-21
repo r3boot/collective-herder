@@ -30,8 +30,8 @@ func NewAgents() *Agents {
 func (p *Agents) LoadAllAgents() {
 	p.argsFunc = make(map[string]func([]string) map[string]interface{})
 	p.preRunFunc = make(map[string]func(map[string]interface{}))
-	p.printFunc = make(map[string]func(time.Time, interface{}))
-	p.summaryFunc = make(map[string]func())
+	p.printFunc = make(map[string]func(time.Time, interface{}, map[string]interface{}))
+	p.summaryFunc = make(map[string]func(map[string]interface{}))
 
 	// Ping agent
 	p.argsFunc[ping.NAME] = ping.ParseArgs
@@ -74,7 +74,7 @@ func (p *Agents) PreRun(plugin string, opts map[string]interface{}) {
 	p.preRunFunc[plugin](opts)
 }
 
-func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interface{}) {
+func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interface{}, opts map[string]interface{}) {
 	var (
 		node           string
 		hostUuid       string
@@ -94,7 +94,7 @@ func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interf
 				Duration: time.Since(startTime),
 				Response: responseResult.(map[string]interface{})["value"].(string),
 			}
-			p.printFunc[plugin](startTime, result)
+			p.printFunc[plugin](startTime, result, opts)
 		}
 	case facts.NAME:
 		{
@@ -104,7 +104,7 @@ func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interf
 				Duration: time.Since(startTime),
 				Response: responseResult.(map[string]interface{}),
 			}
-			p.printFunc[plugin](startTime, result)
+			p.printFunc[plugin](startTime, result, opts)
 		}
 	default:
 		{
@@ -113,15 +113,15 @@ func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interf
 	}
 }
 
-func (p *Agents) Summary(plugin string) {
+func (p *Agents) Summary(plugin string, opts map[string]interface{}) {
 	switch plugin {
 	case ping.NAME:
 		{
-			p.summaryFunc[plugin]()
+			p.summaryFunc[plugin](opts)
 		}
 	case facts.NAME:
 		{
-			p.summaryFunc[plugin]()
+			p.summaryFunc[plugin](opts)
 		}
 	default:
 		{

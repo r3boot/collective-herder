@@ -111,7 +111,7 @@ func Run(opts map[string]interface{}) interface{} {
 	return result
 }
 
-func Print(startTime time.Time, result interface{}) {
+func Print(startTime time.Time, result interface{}, opts map[string]interface{}) {
 	var (
 		hostUuid string
 	)
@@ -127,7 +127,7 @@ func Print(startTime time.Time, result interface{}) {
 	resultSet.Data[hostUuid] = result.(Result)
 }
 
-func Summary() {
+func Summary(opts map[string]interface{}) {
 	var (
 		hostUuid     string
 		allFacts     map[string]interface{}
@@ -138,25 +138,44 @@ func Summary() {
 		values       map[interface{}]int
 	)
 
-	displayFacts = make(map[string]map[interface{}]int)
-	values = make(map[interface{}]int)
-
-	for hostUuid, _ = range resultSet.Data {
-		allFacts = resultSet.Data[hostUuid].Response
-		for key, value = range allFacts {
-			if _, ok := displayFacts[key]; !ok {
-				displayFacts[key] = make(map[interface{}]int)
+	if len(opts) > 0 {
+		// Display only queried facts
+		if _, ok := opts["query"]; !ok {
+			fmt.Fprintf(os.Stderr, "Error: no query key found in option set!\n")
+			os.Exit(2)
+		}
+		for _, value = range opts["query"].([]string) {
+			fmt.Printf("Discovered the following values for " + value.(string) + ":\n")
+			for hostUuid, _ = range resultSet.Data {
+				if _, ok := resultSet.Data[hostUuid].Response[value.(string)]; !ok {
+					continue
+				}
+				fmt.Printf("%-20s%v\n", resultSet.Data[hostUuid].Node, resultSet.Data[hostUuid].Response[value.(string)])
 			}
-
-			displayFacts[key][value] += 1
+			fmt.Printf("\n")
 		}
-	}
+	} else {
+		// Display all facts + counts
+		displayFacts = make(map[string]map[interface{}]int)
+		values = make(map[interface{}]int)
 
-	for key, values = range displayFacts {
-		fmt.Printf("%-22s", key)
-		for value, count = range values {
-			fmt.Printf("(%2d) %-20v", count, value)
+		for hostUuid, _ = range resultSet.Data {
+			allFacts = resultSet.Data[hostUuid].Response
+			for key, value = range allFacts {
+				if _, ok := displayFacts[key]; !ok {
+					displayFacts[key] = make(map[interface{}]int)
+				}
+
+				displayFacts[key][value] += 1
+			}
 		}
-		fmt.Printf("\n")
+
+		for key, values = range displayFacts {
+			fmt.Printf("%-22s", key)
+			for value, count = range values {
+				fmt.Printf("(%2d) %-20v", count, value)
+			}
+			fmt.Printf("\n")
+		}
 	}
 }

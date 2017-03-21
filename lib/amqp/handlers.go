@@ -27,7 +27,7 @@ func (a *AmqpClient) SendToCollective(plugin string, facts map[string]interface{
 	msg = plugins.NewRequest(plugin, facts, opts)
 	Log.Debug("SendToCollective: Sending " + plugin + " message to collective")
 	a.Send(msg)
-	a.ResponseHandler(plugin, msg.Uuid, t_start)
+	a.ResponseHandler(plugin, msg.Uuid, t_start, opts)
 }
 
 func (a *AmqpClient) RequestHandler() error {
@@ -89,7 +89,7 @@ func (a *AmqpClient) RequestHandler() error {
 	return nil
 }
 
-func (a *AmqpClient) ResponseHandler(plugin string, uuid string, startTime time.Time) {
+func (a *AmqpClient) ResponseHandler(plugin string, uuid string, startTime time.Time, opts map[string]interface{}) {
 	var (
 		data       []byte
 		response   plugins.Response
@@ -140,7 +140,7 @@ func (a *AmqpClient) ResponseHandler(plugin string, uuid string, startTime time.
 					Log.Warn(err)
 					continue
 				}
-				Agents.Print(plugin, uuid, startTime, response)
+				Agents.Print(plugin, uuid, startTime, response, opts)
 			}
 		case <-timeoutTimer:
 			{
@@ -150,7 +150,7 @@ func (a *AmqpClient) ResponseHandler(plugin string, uuid string, startTime time.
 		}
 	}
 
-	Agents.Summary(plugin)
+	Agents.Summary(plugin, opts)
 }
 
 func (a *AmqpClient) ProbeResponseHandler(uuid string) []string {

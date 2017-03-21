@@ -45,7 +45,7 @@ func Run(opts map[string]interface{}) interface{} {
 	return response
 }
 
-func Print(startTime time.Time, result interface{}) {
+func Print(startTime time.Time, result interface{}, opts map[string]interface{}) {
 	var (
 		node     string
 		hostUuid string
@@ -70,7 +70,7 @@ func Print(startTime time.Time, result interface{}) {
 	fmt.Println(value + " response from " + node + " in " + duration.String())
 }
 
-func Summary() {
+func Summary(opts map[string]interface{}) {
 	var (
 		min           time.Duration
 		max           time.Duration
