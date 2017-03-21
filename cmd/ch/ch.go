@@ -88,6 +88,7 @@ func AgentSelector() {
 	var (
 		wantedPlugin   string
 		selectedPlugin string
+		optFlags       map[string]interface{}
 		plugin         string
 	)
 
@@ -106,8 +107,13 @@ func AgentSelector() {
 		Usage()
 	}
 
-	Amqp.SendToCollective(selectedPlugin, factFlags, nil)
+	if flag.NArg() > 1 {
+		optFlags = Agents.ParseArgs(selectedPlugin, flag.Args()[1:])
+	}
 
+	Agents.PreRun(selectedPlugin, optFlags)
+
+	Amqp.SendToCollective(selectedPlugin, factFlags, optFlags)
 }
 
 func main() {
@@ -125,7 +131,7 @@ func main() {
 	Log = utils.Log{
 		UseDebug:     *debug,
 		UseVerbose:   *debug,
-		UseTimestamp: true,
+		UseTimestamp: false,
 	}
 
 	if Config, err = config.ReadFile(*cfgFile); err != nil {

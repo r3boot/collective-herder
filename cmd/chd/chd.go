@@ -51,7 +51,7 @@ func main() {
 	Log = utils.Log{
 		UseDebug:     *debug,
 		UseVerbose:   *debug,
-		UseTimestamp: true,
+		UseTimestamp: false,
 	}
 
 	if Config, err = config.ReadFile(*cfgFile); err != nil {
@@ -65,13 +65,7 @@ func main() {
 	p = plugins.NewServers(Log, f)
 	Log.Debug("Loaded " + p.NumServersAsString() + " servers")
 
-	amqp.Setup(Log, amqp.AmqpConfig{
-		Address:      "rabbitmq.service.local:5672",
-		Username:     "ch",
-		Password:     "ch",
-		SendExchange: "ch-send",
-		RecvExchange: "ch-recv",
-	})
+	amqp.Setup(Log, Config.Amqp)
 
 	if Amqp, err = amqp.NewAmqpClient(); err != nil {
 		Log.Error(err)

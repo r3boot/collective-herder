@@ -5,6 +5,8 @@ import (
 )
 
 type Agents struct {
+	argsFunc    map[string]func([]string) map[string]interface{}
+	preRunFunc  map[string]func(map[string]interface{})
 	printFunc   map[string]func(time.Time, interface{})
 	summaryFunc map[string]func()
 	Meta        map[string]string

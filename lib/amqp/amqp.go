@@ -2,7 +2,6 @@ package amqp
 
 import (
 	"errors"
-	"os"
 
 	"github.com/r3boot/collective-herder/lib/facts"
 	"github.com/r3boot/collective-herder/lib/utils"
@@ -10,31 +9,16 @@ import (
 )
 
 var (
-	Config   AmqpConfig
-	Log      utils.Log
-	Agents   *plugins.Agents
-	Facts    *facts.Facts
-	Servers  *plugins.Servers
-	Hostname string
-	HostUuid string
+	Config  AmqpConfig
+	Log     utils.Log
+	Agents  *plugins.Agents
+	Facts   *facts.Facts
+	Servers *plugins.Servers
 )
 
 func Setup(l utils.Log, c AmqpConfig) error {
-	var (
-		err error
-	)
-
 	Log = l
 	Config = c
-
-	if Hostname, err = os.Hostname(); err != nil {
-		err = errors.New("amqp.Setup: Failed to get hostname: " + err.Error())
-		return err
-	}
-	Log.Debug("amqp.Setup: My hostname is " + Hostname)
-
-	HostUuid = utils.Uuidgen()
-	Log.Debug("amqp.Setup: My uuid is " + HostUuid)
 
 	return nil
 }

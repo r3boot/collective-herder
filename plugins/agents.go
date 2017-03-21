@@ -28,15 +28,21 @@ func NewAgents() *Agents {
 }
 
 func (p *Agents) LoadAllAgents() {
+	p.argsFunc = make(map[string]func([]string) map[string]interface{})
+	p.preRunFunc = make(map[string]func(map[string]interface{}))
 	p.printFunc = make(map[string]func(time.Time, interface{}))
 	p.summaryFunc = make(map[string]func())
 
 	// Ping agent
+	p.argsFunc[ping.NAME] = ping.ParseArgs
+	p.preRunFunc[ping.NAME] = ping.PreRun
 	p.printFunc[ping.NAME] = ping.Print
 	p.summaryFunc[ping.NAME] = ping.Summary
 	p.Meta[ping.NAME] = ping.DESCRIPTION
 
 	// Facts agent
+	p.argsFunc[facts.NAME] = facts.ParseArgs
+	p.preRunFunc[facts.NAME] = facts.PreRun
 	p.printFunc[facts.NAME] = facts.Print
 	p.summaryFunc[facts.NAME] = facts.Summary
 	p.Meta[facts.NAME] = facts.DESCRIPTION
@@ -58,6 +64,14 @@ func (p *Agents) HasAgent(name string) bool {
 	}
 
 	return false
+}
+
+func (p *Agents) ParseArgs(plugin string, args []string) map[string]interface{} {
+	return p.argsFunc[plugin](args)
+}
+
+func (p *Agents) PreRun(plugin string, opts map[string]interface{}) {
+	p.preRunFunc[plugin](opts)
 }
 
 func (p *Agents) Print(plugin, uuid string, startTime time.Time, response interface{}) {

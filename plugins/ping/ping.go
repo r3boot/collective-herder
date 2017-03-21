@@ -27,6 +27,13 @@ var (
 	resultSet ResultSet
 )
 
+func ParseArgs(args []string) map[string]interface{} {
+	return make(map[string]interface{})
+}
+
+func PreRun(opts map[string]interface{}) {
+}
+
 func Run(opts map[string]interface{}) interface{} {
 	var (
 		response map[string]string

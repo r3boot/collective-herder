@@ -63,6 +63,14 @@ func (f *Facts) GetAll() map[string]interface{} {
 	return f.facts
 }
 
+func (f *Facts) Get(key string) interface{} {
+	if _, ok := f.facts[key]; !ok {
+		return nil
+	}
+
+	return f.facts[key]
+}
+
 func (f *Facts) HasFact(reqFacts map[string]interface{}) bool {
 	var (
 		reqKey    string
