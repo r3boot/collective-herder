@@ -16,7 +16,7 @@ import (
 
 const (
 	D_DEBUG   bool   = false
-	D_CFGFILE string = "/etc/ch.yml"
+	D_CFGFILE string = "/etc/ch/client.yml"
 )
 
 type FactFlags map[string]interface{}

@@ -8,18 +8,22 @@ import (
 	"github.com/r3boot/collective-herder/lib/utils"
 	"github.com/r3boot/collective-herder/plugins/facts"
 	"github.com/r3boot/collective-herder/plugins/ping"
+	"github.com/r3boot/collective-herder/plugins/run"
 )
 
 var (
-	Facts *sysFacts.Facts
+	Facts   *sysFacts.Facts
+	cmdPath string
 )
 
-func NewServers(l utils.Log, f *sysFacts.Facts) *Servers {
+func NewServers(l utils.Log, path string, f *sysFacts.Facts) *Servers {
 	var (
 		p   *Servers
 		err error
 	)
+
 	Log = l
+	cmdPath = path
 	Facts = f
 
 	p = &Servers{}
@@ -44,6 +48,10 @@ func (p *Servers) LoadAllServers() {
 	// Facts server
 	facts.LoadFacts(Facts)
 	p.runFunc[facts.NAME] = facts.Run
+
+	// Run server
+	run.LoadCommands(cmdPath)
+	p.runFunc[run.NAME] = run.Run
 }
 
 func (p *Servers) NumServersAsString() string {

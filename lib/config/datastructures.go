@@ -5,5 +5,6 @@ import (
 )
 
 type Config struct {
-	Amqp amqp.AmqpConfig `yaml:"amqp"`
+	Amqp        amqp.AmqpConfig `yaml:"amqp"`
+	CommandsDir string          `yaml:"commands_dir"`
 }

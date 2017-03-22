@@ -14,7 +14,7 @@ const (
 type Result struct {
 	Node     string
 	Uuid     string
-	Response string
+	Response map[string]interface{}
 	Duration time.Duration
 }
 
@@ -50,13 +50,15 @@ func Print(startTime time.Time, result interface{}, opts map[string]interface{})
 		node     string
 		hostUuid string
 		duration time.Duration
+		response map[string]interface{}
 		value    string
 	)
 
 	node = result.(Result).Node
 	hostUuid = result.(Result).Uuid
 	duration = result.(Result).Duration
-	value = result.(Result).Response
+	response = result.(Result).Response
+	value = response["value"].(string)
 
 	if resultSet.Data == nil {
 		resultSet = ResultSet{

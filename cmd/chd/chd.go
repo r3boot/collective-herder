@@ -15,7 +15,7 @@ import (
 
 const (
 	D_DEBUG   bool   = false
-	D_CFGFILE string = "/etc/chd.yml"
+	D_CFGFILE string = "/etc/ch/server.yml"
 )
 
 var (
@@ -62,7 +62,7 @@ func main() {
 	f = facts.NewFacts(Log)
 	Log.Debug("Loaded " + f.NumFactsAsString() + " facts")
 
-	p = plugins.NewServers(Log, f)
+	p = plugins.NewServers(Log, Config.CommandsDir, f)
 	Log.Debug("Loaded " + p.NumServersAsString() + " servers")
 
 	amqp.Setup(Log, Config.Amqp)

@@ -145,7 +145,7 @@ func Summary(opts map[string]interface{}) {
 			os.Exit(2)
 		}
 		for _, value = range opts["query"].([]string) {
-			fmt.Printf("Discovered the following values for " + value.(string) + ":\n")
+			fmt.Printf("Discovered the following values for " + value.(string) + ":\n\n")
 			for hostUuid, _ = range resultSet.Data {
 				if _, ok := resultSet.Data[hostUuid].Response[value.(string)]; !ok {
 					continue
