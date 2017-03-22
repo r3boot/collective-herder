@@ -1,0 +1,6 @@
+---
+name: "uname"
+description: "Display the output of uname"
+command: "/bin/uname"
+max_params: 8
+param_regexp: "^-[-asnrvmiohelp]{1,8}$"
