@@ -19,9 +19,30 @@ To start a server, run the following command:
 ./build/chd -d
 ```
 
-To start the client, run the following command:
+To use the client, see the examples below:
 ```bash
-./build/ch -d
+$ ./build/ch ping
+PONG response from alita.local in 3.285842ms
+PONG response from alita.local in 3.860543ms
+PONG response from alita.local in 4.000727ms
+PONG response from alita.local in 4.103193ms
+
+Summary: min/avg/max = 3.285842ms/3.812576ms/4.103193ms
+
+$ ./build/ch run uname -r
+alita.local         stdout: 4.9.11-1-ARCH
+alita.local         stdout: 4.9.11-1-ARCH
+alita.local         stdout: 4.9.11-1-ARCH
+alita.local         stdout: 4.9.11-1-ARCH
+
+$ ./build/ch facts service_mgr
+Discovered the following values for service_mgr:
+
+alita.local         systemd
+alita.local         systemd
+alita.local         systemd
+alita.local         systemd
+
 ```
 
 ## Writing custom plugins
