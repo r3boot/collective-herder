@@ -17,18 +17,18 @@ all: ${TARGET_CODEGEN} ${CODEGEN} ${TARGET_CHD} ${TARGET_CH}
 
 ${TARGET_CODEGEN}:
 	[[ -d ${BUILD_DIR} ]] || mkdir -p ${BUILD_DIR}
-	go build -v -o ${TARGET_CODEGEN} ${SRC_CODEGEN}
+	CGO_ENABLED=0 go build -v -o ${TARGET_CODEGEN} ${SRC_CODEGEN}
 
 ${CODEGEN}: ${TARGET_CODEGEN}
 	${TARGET_CODEGEN}
 
 ${TARGET_CHD}:
 	[[ -d ${BUILD_DIR} ]] || mkdir -p ${BUILD_DIR}
-	go build -v -o ${TARGET_CHD} ${SRC_CHD}
+	CGO_ENABLED=0 go build -v -o ${TARGET_CHD} ${SRC_CHD}
 
 ${TARGET_CH}:
 	[[ -d ${BUILD_DIR} ]] || mkdir -p ${BUILD_DIR}
-	go build -v -o ${TARGET_CH} ${SRC_CH}
+	CGO_ENABLED=0 go build -v -o ${TARGET_CH} ${SRC_CH}
 
 install:
 	install -d -o root -g root -m 0750 /etc/ch
