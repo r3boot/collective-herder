@@ -29,10 +29,7 @@ func GetFactsInFile(fileName string) (map[string]interface{}, error) {
 		return newFacts, nil
 	}
 
-	if newFacts, err = utils.ParseAsKV(data); err == nil {
-		return newFacts, nil
-	}
+	newFacts, err = utils.ParseAsKV(data)
 
-	err = errors.New("GetFactsInFile: Failed to parse " + fileName)
-	return nil, err
+	return newFacts, err
 }

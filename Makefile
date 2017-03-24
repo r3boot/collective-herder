@@ -5,6 +5,8 @@ CODEGEN = codegen
 BUILD_DIR = ./build
 CMD_DIR = ./cmd
 CFG_DIR = ./etc
+SCRIPTS_DIR = ./scripts
+COVERAGE_DIR = ./test_coverage
 
 SRC_CH = ${CMD_DIR}/${CH}/${CH}.go
 TARGET_CH = ${BUILD_DIR}/${CH}
@@ -30,6 +32,9 @@ ${TARGET_CH}:
 	[[ -d ${BUILD_DIR} ]] || mkdir -p ${BUILD_DIR}
 	CGO_ENABLED=0 go build -v -o ${TARGET_CH} ${SRC_CH}
 
+test:
+	${SCRIPTS_DIR}/run_all_tests.sh
+
 install:
 	install -d -o root -g root -m 0750 /etc/ch
 	install -d -o root -g root -m 0750 /etc/ch/commands.d
@@ -41,4 +46,4 @@ install:
 		/etc/ch/commands.d/uname.yml
 
 clean:
-	rm -rf ${BUILD_DIR} || true
+	rm -rf ${BUILD_DIR} ${COVERAGE_DIR} || true

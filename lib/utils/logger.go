@@ -6,11 +6,13 @@ import (
 	"time"
 )
 
-const MSG_INFO byte = 0x0
-const MSG_WARNING byte = 0x1
-const MSG_FATAL byte = 0x2
-const MSG_VERBOSE byte = 0x3
-const MSG_DEBUG byte = 0x4
+const (
+	MSG_INFO    byte = 0x0
+	MSG_WARNING byte = 0x1
+	MSG_FATAL   byte = 0x2
+	MSG_VERBOSE byte = 0x3
+	MSG_DEBUG   byte = 0x4
+)
 
 var MSG_STRING = map[byte]string{
 	MSG_INFO:    "INFO    ",
@@ -25,10 +27,15 @@ type Log struct {
 	UseVerbose      bool
 	UseTimestamp    bool
 	TimestampFormat string
+	TestFd          *os.File
 }
 
 func (l Log) Message(log_level byte, message ...interface{}) {
-	var msg string
+	var (
+		msg string
+		fd  *os.File
+	)
+
 	if l.UseTimestamp {
 		if len(l.TimestampFormat) == 0 {
 			l.TimestampFormat = time.RFC3339
@@ -41,7 +48,17 @@ func (l Log) Message(log_level byte, message ...interface{}) {
 
 	all := append([]interface{}{msg}, message...)
 
-	fmt.Println(all...)
+	if log_level == MSG_FATAL {
+		fd = os.Stderr
+	} else {
+		fd = os.Stdout
+	}
+
+	if l.TestFd != nil {
+		fd = l.TestFd
+	}
+
+	fmt.Fprintln(fd, all...)
 }
 
 func (l Log) Info(message ...interface{}) {
@@ -54,7 +71,9 @@ func (l Log) Warn(message ...interface{}) {
 
 func (l Log) Error(message ...interface{}) {
 	l.Message(MSG_FATAL, message...)
-	os.Exit(1)
+	if l.TestFd == nil {
+		os.Exit(1)
+	}
 }
 
 func (l Log) Verbose(message ...interface{}) {
