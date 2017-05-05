@@ -227,20 +227,25 @@ func Run(opts map[string]interface{}) interface{} {
 	)
 
 	result = make(map[string]interface{})
+	result["stdout"] = ""
+	result["stderr"] = ""
 
 	if opts == nil {
-		fmt.Printf("opts==nil\n")
-		return nil
+		result["stderr"] = "opts == nil\n"
+		fmt.Printf(result["stderr"].(string))
+		return result
 	}
 
 	if opts["help"].(bool) {
-		fmt.Printf("opts[help]==true\n")
-		return nil
+		result["stderr"] = "opts[help] == true\n"
+		fmt.Printf(result["stderr"].(string))
+		return result
 	}
 
 	if _, ok = Commands[opts["command"].(string)]; !ok {
-		fmt.Printf("Commands[opts['command'].(string)]; !ok\n")
-		return nil
+		result["stderr"] = "Commands[opts[command].(string)]; !ok\n"
+		fmt.Printf(result["stderr"].(string))
+		return result
 	}
 
 	command = Commands[opts["command"].(string)].Command
@@ -249,14 +254,16 @@ func Run(opts map[string]interface{}) interface{} {
 	for _, value = range opts["arguments"].([]interface{}) {
 		numValues += 1
 		if numValues > Commands[opts["command"].(string)].MaxParams {
-			fmt.Printf("numValues>maxParams")
-			return nil
+			result["stderr"] = "numValues > maxParams\n"
+			fmt.Printf(result["stderr"].(string))
+			return result
 		}
 
 		value_s = value.(string)
 		if !Commands[opts["command"].(string)].ParamRegexp.MatchString(value_s) {
-			fmt.Printf("parameter!=regexp")
-			return nil
+			result["stderr"] = "parameter != regexp\n"
+			fmt.Printf(result["stderr"].(string))
+			return result
 		}
 		args = append(args, value.(string))
 	}
