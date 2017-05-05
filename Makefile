@@ -33,6 +33,9 @@ ${TARGET_CH}:
 	CGO_ENABLED=0 go build -v -o ${TARGET_CH} ${SRC_CH}
 
 test:
+	go test ./...
+
+coverage:
 	${SCRIPTS_DIR}/run_all_tests.sh
 
 install:

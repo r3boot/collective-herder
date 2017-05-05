@@ -5,9 +5,11 @@ import (
 )
 
 const (
-	AMQP_BUFSIZE    int = 16
-	CONTROL_BUFSIZE int = 1
-	DONE_BUFSIZE    int = 1
+	AMQP_BUFSIZE       int    = 16
+	CONTROL_BUFSIZE    int    = 1
+	DONE_BUFSIZE       int    = 1
+	AMQP_TEST_ADDRESS1 string = "ch-amqp_test"
+	AMQP_TEST_ADDRESS2 string = "ch-amqp_test-nonexisting"
 )
 
 type AmqpClient struct {

@@ -14,7 +14,7 @@ find ${BASE_DIR} -name *_test.go | xargs dirname | sort | uniq | while read SUBD
 
     echo -e "\n>>> Running tests for ${TEST_NAME}:"
     cd ${SUBDIR}
-    go test -v -coverprofile=${COVERAGE_RESULTS}
+    go test -coverprofile=${COVERAGE_RESULTS}
 
     echo -e "\n>>> test coverage:"
     go tool cover -func ${COVERAGE_RESULTS}
